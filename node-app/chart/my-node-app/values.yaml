@@ -68,7 +68,7 @@ ingress:
   hosts:
     - host: node-app.local
       paths:
-        - path: /
+        - path:  /?(.*)
           pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
