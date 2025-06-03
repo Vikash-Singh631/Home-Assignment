@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 const HOST = '0.0.0.0';
 
 // Serve static CSS files (if any in future)

@@ -10,5 +10,5 @@ RUN mkdir -p /usr/src/app /home/nodeuser/.npm \
 WORKDIR /usr/src/app
 COPY --chown=nodeuser:nodeuser --from=builder /usr/src/app .
 USER nodeuser
-EXPOSE 5000
+EXPOSE 8080
 CMD [ "npm", "start" ]
