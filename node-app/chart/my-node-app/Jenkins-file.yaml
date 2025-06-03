@@ -1,13 +1,16 @@
 pipeline {
     agent any
 
+    
     environment {
         IMAGE_NAME = "vikashsingh347/node-app"
         TAG = "v1"
         REGISTRY_CREDENTIALS = 'dockerhub-creds'
+        KUBECONFIG = '/home/vikash/.kube/config'
     }
 
     stages {
+        
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Vikash-Singh631/Home-Assignment.git'
@@ -15,19 +18,28 @@ pipeline {
         }
 
         stage('Build Docker Image') {
+            
             steps {
                 script {
-                    sh 'cd $(pwd)/Home-Assignment/node-app; docker build -t $IMAGE_NAME:$TAG .'
+                    sh 'cd $(pwd)/node-app; docker build -t $IMAGE_NAME:$TAG .'
                 }
             }
         }
         stage('Security Scan - Trivy') {
+            
             steps {
-                sh 'trivy image $IMAGE_NAME:$TAG || true'
+                script {
+                    def result = sh(script: "trivy image --exit-code 0 --severity CRITICAL,HIGH $IMAGE_NAME:$TAG", returnStatus: true)
+                    if (result != 0) {
+                        error("Trivy scan failed! Critical/High vulnerabilities detected.")
+                    } else {
+                        echo "Trivy scan passed. No critical/high vulnerabilities found."
+                    }
+                }
             }
         }
-
         stage('Push to Docker Registry') {
+            
             steps {
                 withCredentials([usernamePassword(credentialsId: "$REGISTRY_CREDENTIALS", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
@@ -39,10 +51,11 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
+            
             steps {
                 script {
                     sh '''
-                        cd $(pwd)/Home-Assignment/node-app/chart;helm upgrade --install my-node-app ./my-node-app --set image.repository=$IMAGE_NAME,image.tag=$TAG
+                        cd $(pwd)/node-app/chart;helm upgrade --install my-node-app ./my-node-app --set image.repository=$IMAGE_NAME,image.tag=$TAG
                     '''
                 }
             }
