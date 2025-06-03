@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
 
 // Serve static CSS files (if any in future)
@@ -55,6 +55,21 @@ app.get('/', (req, res) => {
 
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
+});
+app.get('/metrics', (req, res) => {
+  // Example of Prometheus metrics format
+  const metrics = `
+# HELP node_app_requests_total The total number of requests
+# TYPE node_app_requests_total counter
+node_app_requests_total 42
+
+# HELP node_app_uptime_seconds The uptime of the Node.js process in seconds
+# TYPE node_app_uptime_seconds gauge
+node_app_uptime_seconds ${process.uptime().toFixed(0)}
+  `.trim();
+
+  res.set('Content-Type', 'text/plain; version=0.0.4');
+  res.send(metrics);
 });
 
 app.listen(PORT, HOST, () => {
