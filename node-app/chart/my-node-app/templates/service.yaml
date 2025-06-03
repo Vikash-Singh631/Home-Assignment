@@ -7,8 +7,8 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: http
-      targetPort: {{ .Values.service.targetport }}
+    - port: {{ .Values.service.targetport }}
+      targetPort: http
       protocol: TCP
       name: http
   selector:
