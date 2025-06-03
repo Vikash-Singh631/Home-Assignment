@@ -1,4 +1,4 @@
-FROM node AS builder
+ROM node AS builder
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
