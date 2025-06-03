@@ -45,7 +45,7 @@ app.get('/', (req, res) => {
   <body>
     <div class="container">
       <h1>🚀 Welcome to Node.js Docker App</h1>
-      <p>This application is running in a Docker container on port 3000.</p>
+      <p>This application is running in a Docker container on port ${PORT}.</p>
     </div>
   </body>
   </html>
